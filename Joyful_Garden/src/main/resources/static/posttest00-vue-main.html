@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>發表文章</title>
+    <!--<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="css/ckeditorUtil.css">-->
+
+
+</head>
+
+<body>
+    <style>
+        #container {
+            width: 1000px;
+            margin: 20px auto;
+        }
+
+        .ck-editor__editable[role="textbox"] {
+            /* Editing area */
+            min-height: 200px;
+        }
+
+        .ck-content .image {
+            /* Block images */
+            max-width: 80%;
+            margin: 20px auto;
+        }
+    </style>
+
+
+
+
+    <div id="container">
+        <!--選擇子版，目前先寫死-->
+        <label for="sboardID">請選擇子版:</label><!-- 使用 v-model 進行雙向綁定 -->
+        <select id="sboardID" name="sboardID" v-model="sboardID">
+            <option value="1">初階課程</option> <!-- 假設子版a的sboardID為1 -->
+            <option value="2">進階課程</option> <!-- 假設子版b的sboardID為2 -->
+            <option value="3">花束</option> <!-- 假設子版c的sboardID為3 -->
+            <option value="4">花束</option> <!-- 假設子版c的sboardID為4 -->
+            <option value="5">個人宣傳</option> <!-- 假設子版d的sboardID為5 -->
+            <option value="6">廠商宣傳</option> <!-- 假設子版d的sboardID為6 -->
+            <option value="7">栽種相關</option> <!-- 假設子版d的sboardID為7 -->
+            <option value="8">工具相關</option> <!-- 假設子版d的sboardID為8 -->
+
+        </select>
+        <!-- 新增文章標題輸入欄 -->
+        <label for="postTitle">文章標題:</label>
+        <input type="text" id="postTitle" name="postTitle" v-model="postTitle">
+        
+        <!-- CKEditor 的容器 -->
+        <div id="editor"></div>
+
+        <!-- 提交按鈕 -->
+        <button @click="submitContent">新送出文章</button>
+        
+    </div>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/super-build/ckeditor.js"></script>
+
+    <script type="module">
+        // 創建 Vue 實例
+        import { createApp } from "https://www.unpkg.com/vue@3.3.5/dist/vue.esm-browser.prod.js"
+        const appCK = createApp({
+            data() {
+                return {
+                    sboardID: '', // 初始化 sboardID
+                    postTitle: '',
+                    //authorID: '',
+                };
+            },
+            methods: {
+                getCookieValue(cookieName) {
+                    // 獲取所有的 Cookie (所謂一個是: sessionNickname=Yoro)
+                    var cookies = document.cookie.split(';');
+                    // 遍歷每個 Cookie
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // 如果找到了目標名稱的 Cookie 
+                        if (cookie.startsWith(cookieName + '=')) {
+                            return cookie.substring(cookieName.length + 1);// 提取並返回該 Cookie 的值
+                        }
+                    }
+                    return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
+                },
+                // 定義提交函數
+                submitContent() {
+                    if (window.editor) { // 確保編輯器已經初始化
+
+                        // 獲取 CKEditor 中的內容
+                        var content = window.editor.getData();
+
+                        // 創建要發送的 JSON 對象
+                        var post = {
+                            postTitle: this.postTitle,
+                            postContent: content,
+                            sboardID: this.sboardID, // 使用Vue中的sboardID(若改成動態到url中，需變註解)
+                            authorNickname: this.getCookieValue('sessionNickname')
+                        };
+
+                        // 使用 Axios 發送 POST 請求
+                        //axios.post('http://localhost:8081/forum/' + this.sboardID + '/posts/insert', post)
+                        axios.post('http://localhost:8081/forum/posts', post)
+                            .then(function (response) { // 處理成功響應
+                                console.log('post成功時=', post);
+                                console.log(response);
+                                const npostID = response.data.postID
+                                window.location.href = 'postAndReplies-google.html?postID=' + npostID; // 導向到該文章
+                            })
+                            .catch(function (error) { // 處理錯誤
+                                console.log('post錯誤時=', post);
+                                console.error('error1=', error);
+                            });
+                    } else {
+                        console.error('編輯器未初始化');
+                    }
+                }
+            }
+        });
+        // 將 Vue 應用掛載到元素上
+        appCK.mount('#container');
+
+        
+        // 初始化 CKEditor
+        CKEDITOR.ClassicEditor
+                .create(document.getElementById("editor"), {
+                    toolbar: {
+                        items: [
+                            'undo', 'redo', '|',
+                            'heading', '|',
+                            'bold', 'italic', 'strikethrough', 'underline', '|',
+                            'bulletedList', 'numberedList', 'todoList', '|', 'link', 'uploadImage',
+                        ],
+                        shouldNotGroupWhenFull: true
+                    },
+                    list: {
+                        properties: {
+                            styles: true,
+                            startIndex: true,
+                            reversed: true
+                        }
+                    },
+                    heading: {
+                        options: [
+                            { model: 'paragraph', title: '選擇字體大小', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: '特大', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: '很大', class: 'ck-heading_heading2' },
+                            { model: 'heading3', view: 'h3', title: '中等', class: 'ck-heading_heading3' },
+                            { model: 'heading4', view: 'h4', title: '一般', class: 'ck-heading_heading4' }
+                        ]
+                    },
+                    placeholder: '請勿人身攻擊',
+                    fontFamily: {
+                        options: [
+                            'default',
+                            'Arial, Helvetica, sans-serif',
+                            'Courier New, Courier, monospace',
+                            'Georgia, serif',
+                            'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                            'Tahoma, Geneva, sans-serif',
+                            'Times New Roman, Times, serif',
+                            'Trebuchet MS, Helvetica, sans-serif',
+                            'Verdana, Geneva, sans-serif'
+                        ],
+                        supportAllValues: true
+                    },
+                    fontSize: {
+                        options: [10, 12, 14, 'default', 18, 20, 22],
+                        supportAllValues: true
+                    },
+                    htmlSupport: {
+                        allow: [
+                            {
+                                name: /.*/,
+                                attributes: true,
+                                classes: true,
+                                styles: true
+                            }
+                        ]
+                    },
+                    htmlEmbed: {
+                        showPreviews: true
+                    },
+                    link: {
+                        decorators: {
+                            addTargetToExternalLinks: true,
+                            defaultProtocol: 'https://',
+                            toggleDownloadable: {
+                                mode: 'manual',
+                                label: 'Downloadable',
+                                attributes: {
+                                    download: 'file'
+                                }
+                            }
+                        }
+                    },
+                    mention: {
+                        feeds: [
+                            {
+                                marker: '@',
+                                feed: [
+                                    '@apple', '@bears', '@brownie', '@cake', '@cake', '@candy', '@canes', '@chocolate', '@cookie', '@cotton', '@cream',
+                                    '@cupcake', '@danish', '@donut', '@dragée', '@fruitcake', '@gingerbread', '@gummi', '@ice', '@jelly-o',
+                                    '@liquorice', '@macaroon', '@marzipan', '@oat', '@pie', '@plum', '@pudding', '@sesame', '@snaps', '@soufflé',
+                                    '@sugar', '@sweet', '@topping', '@wafer'
+                                ],
+                                minimumCharacters: 1
+                            }
+                        ]
+                    },
+                    removePlugins: [
+                        'ExportPdf',
+                        'ExportWord',
+                        'AIAssistant',
+                        'CKBox',
+                        'CKFinder',
+                        'EasyImage',
+                        // This sample uses the Base64UploadAdapter to handle image uploads as it requires no configuration.
+                        // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/base64-upload-adapter.html
+                        // Storing images as Base64 is usually a very bad idea.
+                        // Replace it on production website with other solutions:
+                        // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/image-upload.html
+                        // 'Base64UploadAdapter',
+                        'RealTimeCollaborativeComments',
+                        'RealTimeCollaborativeTrackChanges',
+                        'RealTimeCollaborativeRevisionHistory',
+                        'PresenceList',
+                        'Comments',
+                        'TrackChanges',
+                        'TrackChangesData',
+                        'RevisionHistory',
+                        'Pagination',
+                        'WProofreader',
+                        // Careful, with the Mathtype plugin CKEditor will not load when loading this sample
+                        // from a local file system (file://) - load this site via HTTP server if you enable MathType.
+                        'MathType',
+                        // The following features are part of the Productivity Pack and require additional license.
+                        'SlashCommand',
+                        'Template',
+                        'DocumentOutline',
+                        'FormatPainter',
+                        'TableOfContents',
+                        'PasteFromOfficeEnhanced',
+                        'CaseChange'
+                    ]
+                })
+                .then(editor => { // 打印已經初始化成功
+                    console.log('Editor 初始化成功', editor);
+                    window.editor = editor; // 將編輯器對象保存到全局變量中
+                })
+                .catch(error => {
+                    console.error('error0=', error);
+                });
+                
+    </script>
+
+</body>
+
+</html>

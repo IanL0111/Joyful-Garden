@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <!--Made with love by Mutiullah Samim -->
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <!--Bootsrap 4 CDN-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!--Fontawesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+        integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+    <!--Custom styles-->
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+</head>
+
+<body background="image/backgroundfff.png">
+    <div id="app" class="container">
+        <div class="d-flex justify-content-center h-100">
+            <div class="card">
+                <div class="card-header">
+                    <h3>登入</h3>
+                    <!--<div class="d-flex justify-content-end social_icon">
+                        <span><i class="fab fa-facebook-square"></i></span>
+                        <span><i class="fab fa-google-plus-square"></i></span>
+                        <span><i class="fab fa-twitter-square"></i></span>
+                    </div>-->
+                </div>
+                <div class="card-body">
+                    <form @submit.prevent="login">
+
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="請輸入nickname" v-model="fnickname">
+                        </div>
+
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" class="form-control" placeholder="請輸入密碼" v-model="fpassword">
+                        </div>
+
+                        <div class="row align-items-center remember">
+                            <input type="checkbox">記住我
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="登入" class="btn float-right login_btn">
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center links">
+                        尚未有帳號?<a style="color: darksalmon;" href="#">註冊</a>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <a style="color: darksalmon;" href="#">忘記密碼?</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.43/dist/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    fnickname: '',
+                    fpassword: '',
+                };
+            },
+            mounted() {
+
+            },
+            methods: {
+                login() {
+                    var forummembers = {
+                        fnickname: this.fnickname,
+                        fpassword: this.fpassword
+                    };
+                    axios.post('http://localhost:8081/forum/login', forummembers)
+                        .then(response => {
+                            // 登入成功，將後端返回的 Session ID 存儲在 Cookie 中
+                            document.cookie = `sessionNickname=${response.data.fnickname}; path=/`;
+                            document.cookie = `sessionForummemberID=${response.data.forummemberID}; path=/`;
+                            // 其他處理，如跳轉頁面
+                            console.log('response:', response)
+                            console.log(document.cookie)
+                            window.location.href = "allPosts-google.html"
+                            // 使用示例：假設你要獲取名為 sessionNickname 的 Cookie 的值
+                            var nicknameValue = this.getCookieValue('sessionNickname');
+                            var forummemberIDValue = this.getCookieValue('sessionForummemberID')
+                            console.log('Nickname:', nicknameValue);
+                            console.log('ForummemberID:', forummemberIDValue);
+                        })
+                        .catch(error => {
+                            // 處理錯誤
+                            console.error('Error fetching posts:', error);
+                            Swal.fire({
+                                text: '帳號或密碼輸入錯誤',
+                                icon: 'error',
+                                allowOutsideClick: false,
+                                confirmButtonText: '確認',
+                            })
+                        });
+                },
+                getCookieValue(cookieName) {
+                    // 獲取所有的 Cookie
+                    var cookies = document.cookie.split(';');
+                    // 遍歷每個 Cookie
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // 如果找到了目標名稱的 Cookie
+                        if (cookie.startsWith(cookieName + '=')) {
+                            // 提取並返回該 Cookie 的值
+                            return cookie.substring(cookieName.length + 1);
+                        }
+                    }
+                    // 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
+                    return '';
+                }
+
+
+            }
+        });
+        app.mount("#app");
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人紀錄</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/postAndReplies.css">
+    <link rel="stylesheet" type="text/css" href="css/listPosts.css">
+    <link rel="stylesheet" type="text/css" href="css/bar.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    
+
+</head>
+
+<body>
+	<div id="menu_switch">
+     	<img src="/image/menu.png" id="click">
+    </div>
+    <div class="menuLeft">
+        <div class="logoTxt">
+            <a href="/" style="text-decoration: none; color: inherit;"><img src="/image/Joyful_GardenTxt.png"></a>
+        </div>
+    </div>
+
+     <div id="menuMask" class=""></div>
+
+    <div id="menu" >
+        <div class="menuList" id="menuOp">
+            <ul id="ul1"><a href="/shop" style="text-decoration: none; color: inherit;"><img src="/image/logo.jpg">手作商店</a></ul>
+            	<div class="li">
+            	<a href="/PreservedFlower/1" style="text-decoration: none; color: inherit;"><li>永生花</li></a>
+            	<a href="/PreservedFlower/2" style="text-decoration: none; color: inherit;"><li>石墨暈染</li></a>
+            	<a href="/PreservedFlower/3" style="text-decoration: none; color: inherit;"><li>軟裝精選</li></a>
+            	<a href="/jellery/4" style="text-decoration: none; color: inherit;"><li>寶石皂</li></a>
+            	<a href="/PreservedFlower/5" style="text-decoration: none; color: inherit;"><li>蠟燭</li></a>
+            	</div>
+            <ul><a href="/courses/userlist" style="text-decoration: none; color: inherit;"><img src="/image/logo.jpg">特色課程</a></ul>
+            <ul><a href="/activity2" style="text-decoration: none; color: inherit;"><img src="/image/logo.jpg">特別活動</a></ul>
+            <ul><a href="/allPosts-google.html" style="text-decoration: none; color: inherit;"><img src="/image/logo.jpg">花壇</a></ul>
+        </div>
+            <div style="height: 150px;"></div>
+		<div class="menuList">
+            <a href="/Management" style="text-decoration: none; color: inherit;"><ul><img src="/image/logo.jpg">商品管理</ul></a>
+            <a href="/courses/list" style="text-decoration: none; color: inherit;"><ul><img src="/image/logo.jpg">課程管理</ul></a>
+            <a href="/enrollment-management" style="text-decoration: none; color: inherit;"><ul><img src="/image/logo.jpg">報名管理</ul></a>
+            <a href="/activity" style="text-decoration: none; color: inherit;"><ul><img src="/image/logo.jpg">活動管理</a></ul>
+        </div>
+	</div>
+	
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <div id="app">
+
+        <nav class="top-nav">
+            <a style="text-decoration: none; font-size: 50px;" href="allPosts-google.html" class="home">花壇</a>
+            <a style="text-decoration: none;">{{this.nicknameValue}}</a>
+            <a v-if="loggedIn == false" style="text-decoration: none; cursor: pointer;" href="login.html">登入</a>
+            <a v-if="loggedIn == true" style="text-decoration: none; cursor: pointer;" @click="logout">登出</a>
+        </nav>
+
+        <section id="tabs" class="project-tab">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav>
+                            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home"
+                                    role="tab" aria-controls="nav-home" aria-selected="true">{{authorNickname}}的文章</a>
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
+                                    role="tab" aria-controls="nav-profile" aria-selected="false">{{authorNickname}}的回覆</a>
+                                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact"
+                                    role="tab" aria-controls="nav-contact" aria-selected="false">{{authorNickname}}的留言</a>
+                            </div>
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                aria-labelledby="nav-home-tab">
+
+                                <table class="table" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>文章標題</th>
+                                            <th>發表時間</th>
+                                            <th>(最新)</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr v-for="post in posts" :key="post.postID">
+                                            <td><a style="font-size: 25px; text-decoration: none;"
+                                                    v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{
+                                                    post.postTitle}}</a></td>
+                                            <td>{{formatDateTime(post.postTime)}}</td>
+                                            <td>(人數)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                aria-labelledby="nav-profile-tab">
+                                <table class="table" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>回覆標題</th>
+                                            <th>發表時間</th>
+                                            <th>最新留言</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="reply in replies" :key="reply.replyID">
+                                            <td><a style="font-size: 25px; text-decoration: none;"
+                                                    v-bind:href="'postAndReplies-google.html?postID=' + reply.postID + '&replyID=' + reply.replyID">
+                                                    【RE】{{ reply.postTitle }}</a></td>
+                                            <td>{{formatDateTime(reply.replyTime)}}</td>
+                                            <td v-if="reply.comments.length > 0">{{ reply.comments[reply.comments.length - 1].commentContent }}</td>
+                                            <td v-else>尚無留言</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="tab-pane fade" id="nav-contact" role="tabpanel"
+                                aria-labelledby="nav-contact-tab">
+                                <table class="table" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>留言摘要</th>
+                                            <th>留言日期</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="comment in comments" :key="comment.commentID">
+                                            <td>
+                                                <a v-if="comment.postID" style="font-size: 25px; text-decoration: none;"v-bind:href="'postAndReplies-google.html?postID=' + comment.postID ">{{ shortenContent(comment.commentContent) }}
+                                                </a>
+                                                <a v-else style="font-size: 25px; text-decoration: none;" v-bind:href="getPostURL(comment.replyID)">
+                                                    {{ shortenContent(comment.commentContent) }}
+                                                </a>
+                                            </td>
+                                            <td>{{formatDateTime(comment.commentTime)}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.43/dist/vue.global.min.js"></script>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    posts: [],
+                    replies: [],
+                    comments: [],
+                    loggedIn: false,
+                    repliesRR: [],
+                    authorNickname: '',
+                    nicknameValue: '',
+                };
+            },
+            mounted() {
+                const nicknameCookie = this.getCookie('sessionNickname');
+                const forummemberIDCookie = this.getCookie('sessionForummemberID');
+                if (nicknameCookie && forummemberIDCookie) {
+                    this.loggedIn = true;
+                }
+
+                this.nicknameValue = this.getCookieValue('sessionNickname');
+                var forummemberIDValue = this.getCookieValue('sessionForummemberID')
+
+                this.authorNickname = getUrlParameter("authorNickname");
+                axios.get(`http://localhost:8081/forum/postsDesc/${this.authorNickname}`)
+                    .then(responseP => {
+                        console.log('responseP:', responseP);
+                        this.posts = responseP.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching posts:', error);
+                    });
+                axios.get(`http://localhost:8081/forum/repliesDesc/${this.authorNickname}`)
+                    .then(responseR => {
+                        console.log('responseR:', responseR);
+                        this.replies = responseR.data;
+                        // 在這裡取得每個回覆的標題並存儲在replies中
+                        this.replies.forEach(reply => {
+                            axios.get(`http://localhost:8081/forum/posts/${reply.postID}`)
+                                .then(response => {
+                                    console.log('responsePT:', response);
+                                    reply.postTitle = response.data.postTitle;
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching post title:', error);
+                                });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching replies:', error);
+                    });
+                axios.get(`http://localhost:8081/forum/postandreplyDesc/${this.authorNickname}`)
+                    .then(responseC => {
+                        console.log('responseC:', responseC);
+                        this.comments = responseC.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching posts:', error);
+                    });
+                axios.get("http://localhost:8081/forum/replies")
+                    .then(responseRR => {
+                        console.log('responseRR:', responseRR);
+                        this.repliesRR = responseRR.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching posts:', error);
+                    });
+            },
+            methods: {
+                getCookieValue(cookieName) {
+                    // 獲取所有的 Cookie (所謂一個是: sessionNickname=Yoro)
+                    var cookies = document.cookie.split(';');
+                    // 遍歷每個 Cookie
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // 如果找到了目標名稱的 Cookie 
+                        if (cookie.startsWith(cookieName + '=')) {
+                            return cookie.substring(cookieName.length + 1);// 提取並返回該 Cookie 的值
+                        }
+                    }
+                    return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
+                },
+                formatDateTime(xxx) {
+                    var formattedDateTime = new Date(xxx).toLocaleString("zh-TW", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        minute: "2-digit",
+                        hour: "2-digit",
+                        second: "2-digit",
+                        hour12: true
+                    });
+                    return formattedDateTime;
+                },
+                shortenContent(shortcont) {
+                    // 移除 <p> 標籤
+                    let plainText = shortcont.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+                    // 截斷內容
+                    if (plainText.length > 10) {
+                        return plainText.substring(0, 10) + '...';
+                    } else {
+                        return plainText + '...';
+                    }
+                },
+                getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                },
+                logout() {
+                    // 清除相關的 Cookie
+                    document.cookie = 'sessionNickname=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    document.cookie = 'sessionForummemberID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = "allPosts-google.html"; 
+                },
+                getPostURL(replyID) {
+                    // 在這裡透過迴圈或其他方法找到對應的 postID
+                    // 假設你的 replies 是一個包含 postID 和 replyID 的物件陣列
+                    const matchedReply = this.repliesRR.find(reply => reply.replyID === replyID);
+                    if (matchedReply) {
+                        return 'postAndReplies-google.html?postID=' + matchedReply.postID + '&replyID=' + replyID;
+                    } else {
+                        // 如果找不到對應的 replyID，可以返回一個默認的 URL 或者處理其他邏輯
+                        return 'defaultURL.html';
+                    }
+                },
+            }
+        });
+        app.mount("#app");
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+.footerBox {
+    width: 80%;
+    display: flex;
+    justify-content: space-around;
+    position: relative; /* 將位置設置為相對定位 */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.footerBoxLeft {
+    flex-direction: column;
+    text-align: center;
+    margin: 15px;
+    margin-right: 110px;
+}
+
+.footerBoxCenter {
+    text-align: left;
+    flex-direction: column;
+    color: #7a7281;
+    margin: 15px;
+}
+
+.footerBoxRight {
+    text-align: left;
+    flex-direction: column;
+    color: #7a7281;
+    margin: 15px;
+    margin-right: 110px;
+}
+
+.footer {
+    flex-direction: column;
+    text-align: center;
+    height: 350px;
+    position: relative;
+    background-color: white;
+    font-family: console,微軟正黑體;
+}
+
+.footerCopyRight {
+    color: #7a7281;
+    position: absolute;
+    bottom: 10px; /* 調整底部間距 */
+    left: 50%;
+    transform: translateX(-50%);
+}
