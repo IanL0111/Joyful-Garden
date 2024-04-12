@@ -81,19 +81,15 @@ public class MembersUserController {
 	@ResponseBody
 	public String login(@RequestParam String username, @RequestParam String password, HttpSession session) {
 		try {
-			
-			 System.out.println("111111111111111");
 		
 			// 使用 AuthenticationManager 進行驗證
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 			
-			System.out.println("22222222222222");
 			
 			// 將驗證結果設置到 SecurityContext 中
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			
-			System.out.println("333333333333");
 
 			// 获取 memberId 和 nickName
 	        int memberId = mService.getMemberIdByUsername(username);
